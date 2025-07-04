@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recibo de Administración</title>
+    <style>
+        /* ... (todo tu CSS igual, lo puedes dejar sin cambios) ... */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .recibo {
+            background: white;
+            border: 2px solid #000;
+            width: 450px;
+            min-height: 600px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 2px solid #000;
+            background: white;
+            color: black;
+        }
+        .logo {
+            width: 120px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            position: relative;
+        }
+        .company-info {
+            flex: 1;
+            text-align: center;
+        }
+        .company-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .nit {
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+        .reference-box {
+            border: 2px solid #000;
+            padding: 5px;
+            text-align: center;
+            margin-left: 10px;
+            min-width: 80px;
+        }
+        .reference-label {
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .reference-number {
+            font-size: 18px;
+            font-weight: bold;
+            background: #e8e8e8;
+            padding: 2px;
+            margin-top: 2px;
+        }
+        .date-section {
+            padding: 10px;
+            border-bottom: 1px solid #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+        .date-left {
+            font-weight: bold;
+            color: #2980b9;
+        }
+        .property-info {
+            padding: 10px;
+            border-bottom: 1px solid #000;
+            background: white;
+        }
+        .property-row {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        .property-label {
+            background: #2980b9;
+            color: white;
+            padding: 2px 5px;
+            font-weight: bold;
+            width: 80px;
+            text-align: center;
+            font-size: 11px;
+        }
+        .property-value {
+            background: #3498db;
+            color: white;
+            padding: 2px 5px;
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+        }
+        .accounts-section {
+            padding: 10px;
+            border-bottom: 1px solid #000;
+            background: white;
+        }
+        .accounts-row {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        .account-type {
+            background: #2980b9;
+            color: white;
+            padding: 2px 5px;
+            font-weight: bold;
+            width: 100px;
+            text-align: center;
+            font-size: 11px;
+        }
+        .account-number {
+            background: white;
+            padding: 2px 5px;
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+        }
+        .table-section {
+            padding: 10px;
+            background: white;
+        }
+        .charges-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .charges-table th {
+            background: #3498db;
+            color: white;
+            padding: 5px;
+            text-align: center;
+            font-size: 11px;
+            border: 1px solid #000;
+        }
+        .charges-table td {
+            padding: 5px;
+            text-align: center;
+            font-size: 11px;
+            border: 1px solid #000;
+            background: white;
+        }
+        .total-section {
+            margin-top: 10px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid #ccc;
+        }
+        .total-label {
+            font-weight: bold;
+        }
+        .total-value {
+            font-weight: bold;
+            text-align: right;
+        }
+        .discount-row {
+            color: #d32f2f;
+        }
+        .final-total {
+            background: #2980b9;
+            color: white;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            border-top: 2px solid #000;
+            background: white;
+            color: black;
+        }
+        .banco {
+            background: white;
+        }
+        .banco .header,
+        .banco .date-section,
+        .banco .property-info,
+        .banco .accounts-section,
+        .banco .table-section,
+        .banco .footer {
+            background: white;
+            color: black;
+        }
+        .banco .charges-table th {
+            background: #3498db;
+            color: white;
+        }
+        .banco .charges-table td {
+            background: white;
+        }
+        .banco .final-total {
+            background: #2980b9;
+            color: white;
+        }
+        .highlight-yellow {
+            background: #3498db !important;
+            color: white !important;
+        }
+        .highlight-red {
+            background: #2980b9 !important;
+            color: white !important;
+        }
+        .editable {
+            background: #3498db;
+            color: white;
+            border: 1px dashed #2980b9;
+            padding: 2px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Recibo del Residente -->
+    <div class="recibo">
+        <div class="header">
+            <div class="logo">
+                <img th:src="@{/img/logo.png}" alt="Logo" class="logo">
+            </div>
+            <div class="company-info">
+                <div class="company-name">C.R. MULTIFAMILIAR<br>SANTA COLOMA</div>
+                <div class="nit">NIT: 804.008.113-7</div>
+            </div>
+            <div class="reference-box">
+                <div class="reference-label">Referencia</div>
+                <div class="reference-number" th:text="${referenciaResidente}">1201</div>
+            </div>
+        </div>
+
+        <div class="date-section">
+            <div class="date-left" th:text="${fechaResidente}">Junio 1 de 2025</div>
+            <div th:text="${nombreResidente}">Tarazona De Torres Isidora</div>
+        </div>
+
+        <div class="property-info">
+            <div class="property-row">
+                <div class="property-label" th:text="'Torre '+${torreResidente}">Torre 1</div>
+                <div class="property-value" th:text="'Apto '+${aptoResidente}">Apto 201</div>
+                <div class="property-label">Recibo</div>
+                <div class="property-value" th:text="${reciboResidente}">8377</div>
+            </div>
+        </div>
+
+        <div class="accounts-section">
+            <div class="accounts-row">
+                <div class="account-type">Comultrasan</div>
+                <div class="account-number">Finandina</div>
+                <div class="account-number">Bancolombia</div>
+            </div>
+            <div class="accounts-row">
+                <div class="account-type">Cuenta Ahorros</div>
+                <div class="account-number">Cuenta Ahorros</div>
+                <div class="account-number">Cta. Corriente</div>
+            </div>
+            <div class="accounts-row">
+                <div class="account-type" th:text="${cuentaComultrasanResidente}">050570000784</div>
+                <div class="account-number" th:text="${cuentaFinandinaResidente}">904000534</div>
+                <div class="account-number" th:text="${cuentaBancolombiaResidente}">81489459072</div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <table class="charges-table">
+                <thead>
+                <tr>
+                    <th>Concepto</th>
+                    <th>Anterior</th>
+                    <th>Cargos</th>
+                    <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Administración</td>
+                    <td th:text="${anterior1Residente}"></td>
+                    <td th:text="${cargo1Residente}">237.000</td>
+                    <td th:text="${subtotal1Residente}">237.000</td>
+                </tr>
+                <tr>
+                    <td>Sanción Inasistencia Asamblea</td>
+                    <td th:text="${anterior2Residente}"></td>
+                    <td th:text="${cargo2Residente}"></td>
+                    <td th:text="${subtotal2Residente}"></td>
+                </tr>
+                <tr>
+                    <td>Int. por Mora 2%</td>
+                    <td th:text="${anterior3Residente}"></td>
+                    <td th:text="${cargo3Residente}"></td>
+                    <td th:text="${subtotal3Residente}"></td>
+                </tr>
+                <tr>
+                    <td>Áreas Comunes</td>
+                    <td th:text="${anterior4Residente}"></td>
+                    <td th:text="${cargo4Residente}"></td>
+                    <td th:text="${subtotal4Residente}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="total-section">
+                <div class="total-row">
+                    <div class="total-label">Valor Total a Pagar</div>
+                    <div class="total-value" th:text="${totalResidente}">237.000</div>
+                </div>
+                <div class="total-row discount-row">
+                    <div class="total-label">- Descuento por Pronto Pago</div>
+                    <div class="total-value" th:text="${descuentoResidente}">10.000</div>
+                </div>
+                <div class="final-total">
+                    <div class="total-row">
+                        <div class="total-label">Si paga antes del <span th:text="${fechaLimiteResidente}">21 de Junio</span></div>
+                        <div class="total-value" th:text="${pagoProntoResidente}">227.000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            RESIDENTE
+        </div>
+    </div>
+
+    <!-- Recibo del Banco -->
+    <div class="recibo banco">
+        <div class="header">
+            <div class="logo">
+                <img th:src="@{/img/logo.png}" alt="Logo" class="logo">
+            </div>
+            <div class="company-info">
+                <div class="company-name">C.R. MULTIFAMILIAR<br>SANTA COLOMA</div>
+                <div class="nit">NIT: 804.008.113-7</div>
+            </div>
+            <div class="reference-box">
+                <div class="reference-label">Referencia</div>
+                <div class="reference-number highlight-yellow" th:text="${fechaBanco}">Fecha</div>
+                <div class="reference-number highlight-red" th:text="${referenciaBanco}">Valor 01</div>
+            </div>
+        </div>
+
+        <div class="date-section">
+            <div class="highlight-yellow editable" th:text="${fechaBanco}">Fecha</div>
+            <div class="highlight-yellow editable" th:text="${nomPersonaBanco}">nomPersona</div>
+        </div>
+
+        <div class="property-info">
+            <div class="property-row">
+                <div class="property-label highlight-yellow" th:text="${nomPredioBanco}">nomPredio</div>
+                <div class="property-value highlight-red" th:text="${valor02Banco}">Valor 02</div>
+            </div>
+        </div>
+
+        <div class="accounts-section">
+            <div class="accounts-row">
+                <div class="account-type">Comultrasan</div>
+                <div class="account-number">Finandina</div>
+                <div class="account-number">Bancolombia</div>
+            </div>
+            <div class="accounts-row">
+                <div class="account-type">Cuenta Ahorros</div>
+                <div class="account-number">Cuenta Ahorros</div>
+                <div class="account-number">Cta. Corriente</div>
+            </div>
+            <div class="accounts-row">
+                <div class="account-type" th:text="${cuentaComultrasanBanco}">050570000784</div>
+                <div class="account-number" th:text="${cuentaFinandinaBanco}">904000534</div>
+                <div class="account-number" th:text="${cuentaBancolombiaBanco}">81489459072</div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <table class="charges-table">
+                <thead>
+                <tr>
+                    <th>Concepto</th>
+                    <th>Anterior</th>
+                    <th>Cargos</th>
+                    <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Administración</td>
+                    <td class="highlight-yellow editable" th:text="${anterior1Banco}">Valor 03</td>
+                    <td class="highlight-yellow editable" th:text="${cargo1Banco}">Valor 04</td>
+                    <td th:text="${subtotal1Banco}">237.000</td>
+                </tr>
+                <tr>
+                    <td class="highlight-yellow editable" th:text="${concepto01Banco}">Concepto 01</td>
+                    <td th:text="${anterior2Banco}"></td>
+                    <td class="highlight-yellow editable" th:text="${cargo2Banco}">Valor 05</td>
+                    <td th:text="${subtotal2Banco}">0</td>
+                </tr>
+                <tr>
+                    <td>Int. por Mora 2%</td>
+                    <td class="highlight-yellow editable" th:text="${anterior3Banco}">Valor 06</td>
+                    <td class="highlight-yellow editable" th:text="${cargo3Banco}">Valor 07</td>
+                    <td th:text="${subtotal3Banco}">0</td>
+                </tr>
+                <tr>
+                    <td>Áreas Comunes</td>
+                    <td class="highlight-yellow editable" th:text="${anterior4Banco}">Valor 08</td>
+                    <td class="highlight-yellow editable" th:text="${cargo4Banco}">Valor 09</td>
+                    <td th:text="${subtotal4Banco}">0</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="total-section">
+                <div class="total-row">
+                    <div class="total-label">Valor Total a Pagar</div>
+                    <div class="total-value" th:text="${totalBanco}">237.000</div>
+                </div>
+                <div class="total-row discount-row">
+                    <div class="total-label">- Descuento por Pronto Pago</div>
+                    <div class="total-value" th:text="${descuentoBanco}">10.000</div>
+                </div>
+                <div class="final-total">
+                    <div class="total-row">
+                        <div class="total-label">Si paga antes del <span th:text="${fechaLimiteBanco}">21 de Junio</span></div>
+                        <div class="total-value" th:text="${pagoProntoBanco}">227.000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            BANCO
+        </div>
+    </div>
+</div>
+</body>
+</html>
