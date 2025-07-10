@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 @Repository
 public interface CiudadesRepository extends JpaRepository<CiudadesEntity, BigDecimal> {
+    boolean existsByNombreCiudad(String nombre);
 }
