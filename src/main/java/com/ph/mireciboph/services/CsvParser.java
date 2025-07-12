@@ -9,14 +9,14 @@ import java.util.List;
 
 public abstract class CsvParser<T> {
 
-    public List<T> parsearCsv(String archivo, Class<T> tipo) {
-        try (Reader reader = new FileReader(archivo)) {
+    public List<T> parsearCsv(Reader reader, Class<T> tipo) {
+        try {
             CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)
-                    .withType(tipo)  // El tipo se pasa como parámetro
+                    .withType(tipo)
                     .withIgnoreLeadingWhiteSpace(true)
                     .build();
             return csvToBean.parse();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error al parsear el archivo CSV", e);
         }
     }

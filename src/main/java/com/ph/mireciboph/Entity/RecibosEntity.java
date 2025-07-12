@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "predios")
 public class RecibosEntity {
     @Id

@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "conjuntos")
 public class ConjuntosEntity {
     @Id

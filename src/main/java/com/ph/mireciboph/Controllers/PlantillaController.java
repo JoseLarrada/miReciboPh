@@ -1,4 +1,4 @@
-package com.ph.mireciboph;
+package com.ph.mireciboph.Controllers;
 
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
