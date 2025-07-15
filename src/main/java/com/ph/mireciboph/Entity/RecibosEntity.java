@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "predios")
+@Table(name = "recibos")
 public class RecibosEntity {
     @Id
     @Column(name = "codRecibo")

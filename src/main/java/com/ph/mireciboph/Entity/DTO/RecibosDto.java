@@ -1,6 +1,7 @@
 package com.ph.mireciboph.Entity.DTO;
 
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class RecibosDto {
     @CsvBindByName(column = "codPredio")
     private BigDecimal codPredio;
     @CsvBindByName(column = "fecha")
+    @CsvDate("yyyy-MM-dd")
     private Date fecha;
     @CsvBindByName(column = "campo01")
     private BigDecimal campo01;
