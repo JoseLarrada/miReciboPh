@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Recibo PH - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div id="dashboard-root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Modal Component
+        function Modal({ isOpen, onClose, children }) {
+            if (!isOpen) return null;
+
+            return (
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <div className="fixed inset-0 transition-opacity" onClick={onClose}>
+                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                        </div>
+
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+                        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                            <div className="absolute top-0 right-0 pt-4 pr-4">
+                                <button
+                                    type="button"
+                                    className="bg-white rounded-md text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    onClick={onClose}
+                                >
+                                    <span className="sr-only">Cerrar</span>
+                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            {children}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // PredioItem Component
+        function PredioItem({ predio }) {
+            return (
+                <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                                {predio.nombre || 'Predio sin nombre'}
+                            </h3>
+                            <p className="text-sm text-gray-500 mt-1">
+                                <span className="font-medium">Referencia de Pago:</span>
+                                <span className="ml-1 bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                                    {predio.referenciaPago}
+                                </span>
+                            </p>
+                        </div>
+                        <div className="ml-4">
+                            <a
+                                href={`/recibo?ref=${predio.referenciaPago}`}
+                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Ver Recibo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // PrediosList Component
+        function PrediosList({ predios, loading, error }) {
+            if (loading) {
+                return (
+                    <div className="flex justify-center items-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <span className="ml-2 text-gray-600">Cargando predios...</span>
+                    </div>
+                );
+            }
+
+            if (error) {
+                return (
+                    <div className="text-center py-8">
+                        <div className="text-red-600 mb-2">
+                            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.924-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                        </div>
+                        <p className="text-gray-600">{error}</p>
+                    </div>
+                );
+            }
+
+            if (!predios || predios.length === 0) {
+                return (
+                    <div className="text-center py-8">
+                        <div className="text-gray-400 mb-2">
+                            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5a2 2 0 012-2h2a2 2 0 012 2v2H9V5z" />
+                            </svg>
+                        </div>
+                        <p className="text-gray-600">No hay predios disponibles</p>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {predios.map((predio) => (
+                        <PredioItem key={predio.id || predio.referenciaPago} predio={predio} />
+                    ))}
+                </div>
+            );
+        }
+
+        // Dashboard Component
+        function Dashboard() {
+            const [showModal, setShowModal] = useState(true);
+            const [predios, setPredios] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState('');
+            const [user, setUser] = useState(null);
+
+            useEffect(() => {
+                // Get user info from localStorage
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+                }
+
+                // Load predios when component mounts
+                loadPredios();
+            }, []);
+
+            const loadPredios = async () => {
+                setLoading(true);
+                setError('');
+
+                try {
+                    const response = await fetch('/api/predios');
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        setPredios(data);
+                    } else {
+                        setError('Error al cargar los predios');
+                    }
+                } catch (err) {
+                    setError('Error de conexión al cargar predios');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const handleLogout = () => {
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    {/* Header */}
+                    <header className="bg-white shadow">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center py-6">
+                                <div className="flex items-center">
+                                    <div className="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
+                                        <img src="/img/logo.png" alt="Logo" className="h-8 w-8 rounded-full" onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'block';
+                                        }} />
+                                        <div className="text-white text-sm font-bold hidden">PH</div>
+                                    </div>
+                                    <h1 className="ml-3 text-2xl font-bold text-gray-900">Mi Recibo PH</h1>
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                    {user && (
+                                        <span className="text-gray-700">
+                                            Bienvenido, {user.username}
+                                        </span>
+                                    )}
+                                    <button
+                                        onClick={() => setShowModal(true)}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                                    >
+                                        Ver Predios
+                                    </button>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                                    >
+                                        Cerrar Sesión
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                        <div className="px-4 py-6 sm:px-0">
+                            <div className="bg-white overflow-hidden shadow rounded-lg">
+                                <div className="px-4 py-5 sm:p-6">
+                                    <h2 className="text-lg font-medium text-gray-900 mb-4">Panel de Control</h2>
+                                    <p className="text-gray-600">
+                                        Bienvenido al sistema de gestión de recibos. Utiliza el botón "Ver Predios" para acceder a la lista de propiedades disponibles.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* Modal */}
+                    <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+                        <div className="sm:flex sm:items-start">
+                            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                    Lista de Predios
+                                </h3>
+                                <div className="mt-4">
+                                    <PrediosList predios={predios} loading={loading} error={error} />
+                                </div>
+                                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                                    <button
+                                        type="button"
+                                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                        onClick={() => setShowModal(false)}
+                                    >
+                                        Cerrar
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm"
+                                        onClick={loadPredios}
+                                    >
+                                        Actualizar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </Modal>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<Dashboard />, document.getElementById('dashboard-root'));
+    </script>
+</body>
+</html>
