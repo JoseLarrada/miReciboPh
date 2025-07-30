@@ -19,7 +19,7 @@
 	<description>Generador de recibos y software de mireciboph</description>
 
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 	</properties>
 
 	<dependencies>
